@@ -31,7 +31,7 @@
 | 微前端方案 | iframe 嵌入 | 浏览器级 WebGL 隔离，importmap 原生支持 |
 | 导航 | 分类折叠 + 搜索 | 61 个 demo 需要快速过滤 |
 | Three.js 依赖 | 本地共享目录 | 不依赖 CDN，3 个版本去重共享 |
-| 部署 | GitHub Pages 静态站点 | 零服务器成本，GitHub Actions 自动构建 |
+| 部署 | GitHub Pages + Cloudflare Pages | 双平台部署，Cloudflare 国内访问更快 |
 | 测试 | Playwright 按分类抽样 | 覆盖 importmap / Vite / React 三种类型 |
 
 ### 子应用分类
@@ -237,28 +237,70 @@ npm run test:e2e
 
 ---
 
-## GitHub Pages 部署
+## 线上访问地址
 
-### 自动部署
+| 平台 | 地址 | 适合场景 |
+|------|------|---------|
+| **Cloudflare Pages** 🚀 | [https://three-js-study-micro.pages.dev/](https://three-js-study-micro.pages.dev/) | **推荐** — 国内访问更快 |
+| **GitHub Pages** | [https://lxysy.github.io/three-js-study-micro/](https://lxysy.github.io/three-js-study-micro/) | 备选 |
 
-推送代码到 `master` 或 `main` 分支即可触发 GitHub Actions 自动构建部署。
+---
 
-### 手动部署
+## 部署指南
+
+### 方式一：Cloudflare Pages（推荐）
+
+Cloudflare Pages 在国内网络环境下访问速度优于 GitHub Pages。
+
+#### 前置准备
+
+1. 注册 [Cloudflare](https://dash.cloudflare.com/) 账号
+2. 创建 API Token：`Account — Cloudflare Pages — Edit` + `Account — Account Settings — Read`
+3. 获取 Account ID（Dashboard 右侧可见）
+
+#### 一键部署
+
+```bash
+# 安装 wrangler CLI
+npm install -g wrangler
+
+# 设置环境变量
+export CLOUDFLARE_API_TOKEN="<your-api-token>"
+export CLOUDFLARE_ACCOUNT_ID="<your-account-id>"
+
+# 创建项目
+wrangler pages project create three-js-study-micro --production-branch=master
+
+# 构建 & 部署
+npm run build
+wrangler pages deploy dist/ --project-name=three-js-study-micro --branch=master
+```
+
+部署完成后访问 `https://<project-name>.pages.dev/`
+
+#### 发布新版本
 
 ```bash
 npm run build
-# 将 dist/ 目录内容推送到 gh-pages 分支
+wrangler pages deploy dist/ --project-name=three-js-study-micro --branch=master
+```
+
+### 方式二：GitHub Pages
+
+推送代码到 `master` 分支自动触发 GitHub Actions 部署，或手动：
+
+```bash
+npm run build
+# 将 dist/ 目录部署到 gh-pages 分支
 ```
 
 ### 部署平台对比
 
-| 平台 | 免费额度 | 优势 |
-|------|---------|------|
-| **GitHub Pages** | 1GB 存储 / 100GB 月流量 | 零配置，与仓库集成 |
-| Cloudflare Pages | 无限站点 / 500GB 月流量 | 全球 CDN，带宽更宽 |
-| Netlify | 100GB 月流量 | 功能丰富，PR 预览 |
-
-> 本项目包含大量 3D 模型和 HDR 资源，若接近 GitHub Pages 的 1GB 存储限制，建议迁移到 Cloudflare Pages。
+| 平台 | 免费额度 | 国内速度 | 优势 |
+|------|---------|---------|------|
+| **Cloudflare Pages** | 无限站点 / 500GB 月流量 | ⭐⭐⭐⭐ | 全球 CDN，国内访问快 |
+| **GitHub Pages** | 1GB 存储 / 100GB 月流量 | ⭐⭐ | 零配置，与仓库集成 |
+| Netlify | 100GB 月流量 | ⭐⭐⭐ | 功能丰富，PR 预览 |
 
 ---
 
@@ -272,5 +314,5 @@ npm run build
 | 样式 | 纯 CSS（暗色主题，CSS 变量） |
 | 路由 | Hash 路由（`#/demo-name`） |
 | 测试 | Playwright |
-| CI/CD | GitHub Actions |
-| 部署 | GitHub Pages（静态站点） |
+| CI/CD | GitHub Actions + Cloudflare Pages |
+| 部署 | GitHub Pages / Cloudflare Pages |

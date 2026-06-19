@@ -1,0 +1,5 @@
+# Cloudflare Pages configuration
+# Deploy: wrangler pages deploy dist/ --branch=master
+name = "three-js-study-micro"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-06-19"
