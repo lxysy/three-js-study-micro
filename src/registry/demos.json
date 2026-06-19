@@ -1,0 +1,490 @@
+[
+  {
+    "name": "buffer-geometry",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "basic",
+    "description": "BufferGeometry 的基础用法",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "curve",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "basic",
+    "description": "曲线 (Curve) 的创建与使用",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "data-gui",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "basic",
+    "description": "dat.GUI 调试面板的使用",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "first-scene",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "basic",
+    "description": "Three.js 第一个场景：创建场景、相机、立方体",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "generate-geometry",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "basic",
+    "description": "程序化生成几何体",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "geometry-color",
+    "type": "vite",
+    "threeVersion": "0.175.0",
+    "category": "basic",
+    "description": "几何体颜色与顶点颜色",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "house",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "basic",
+    "description": "构建一个简单的 3D 房屋",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "light-helper",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "basic",
+    "description": "光照辅助工具",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "material-color-texture",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "basic",
+    "description": "材质颜色与纹理",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "material-share",
+    "type": "vite",
+    "threeVersion": "0.175.0",
+    "category": "basic",
+    "description": "材质共享与复用",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "perspective-camera",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "basic",
+    "description": "透视相机的参数与使用",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "point-line-mesh",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "basic",
+    "description": "点、线、网格三种渲染方式",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "scene-group",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "basic",
+    "description": "场景组 (Group) 的使用",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "texture-uv",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "basic",
+    "description": "纹理 UV 坐标",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "all-controls",
+    "type": "vite",
+    "threeVersion": "0.184.0",
+    "category": "advanced",
+    "description": "多种控制器综合演示",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "all-pass",
+    "type": "vite",
+    "threeVersion": "0.175.0",
+    "category": "advanced",
+    "description": "后期处理 Pass 效果合集",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "cube-camera-envmap",
+    "type": "vite",
+    "threeVersion": "0.184.0",
+    "category": "advanced",
+    "description": "立方体相机与环境贴图",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "decal-geometry",
+    "type": "vite",
+    "threeVersion": "0.184.0",
+    "category": "advanced",
+    "description": "贴花几何体 DecalGeometry",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "gltf-draco-test",
+    "type": "vite",
+    "threeVersion": "0.175.0",
+    "category": "advanced",
+    "description": "glTF Draco 压缩测试",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "gltf-model",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "advanced",
+    "description": "加载 glTF 模型",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "gltf-pipeline-test",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "advanced",
+    "description": "glTF Pipeline 工作流测试",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "gltf-structure",
+    "type": "vite",
+    "threeVersion": "0.175.0",
+    "category": "advanced",
+    "description": "glTF 模型结构分析",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "hdr-background",
+    "type": "vite",
+    "threeVersion": "0.184.0",
+    "category": "advanced",
+    "description": "HDR 环境背景",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "matcap-material",
+    "type": "vite",
+    "threeVersion": "0.184.0",
+    "category": "advanced",
+    "description": "MatCap 材质",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "mountain-terrain",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "advanced",
+    "description": "程序化生成山地地形",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "orbit-controls",
+    "type": "vite",
+    "threeVersion": "0.175.0",
+    "category": "advanced",
+    "description": "轨道控制器 OrbitControls 使用",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "orthographic-camera-shadow",
+    "type": "vite",
+    "threeVersion": "0.175.0",
+    "category": "advanced",
+    "description": "正交相机与阴影",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "pbr-material",
+    "type": "vite",
+    "threeVersion": "0.184.0",
+    "category": "advanced",
+    "description": "PBR 物理材质",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "post-processing",
+    "type": "vite",
+    "threeVersion": "0.175.0",
+    "category": "advanced",
+    "description": "后期处理特效",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "ray-caster",
+    "type": "vite",
+    "threeVersion": "0.175.0",
+    "category": "advanced",
+    "description": "射线检测与交互",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "simplex-noise-test",
+    "type": "vite",
+    "threeVersion": "0.176.0",
+    "category": "advanced",
+    "description": "Simplex 噪声算法测试",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "vertex-normal",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "advanced",
+    "description": "顶点法线操作",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "bone-animation",
+    "type": "vite",
+    "threeVersion": "0.176.0",
+    "category": "animation",
+    "description": "骨骼动画",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "infinite-tunnel",
+    "type": "vite",
+    "threeVersion": "0.175.0",
+    "category": "animation",
+    "description": "无限隧道效果",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "keyframes-animation",
+    "type": "vite",
+    "threeVersion": "0.176.0",
+    "category": "animation",
+    "description": "关键帧动画",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "morph-animation",
+    "type": "vite",
+    "threeVersion": "0.176.0",
+    "category": "animation",
+    "description": "变形动画 (Morph Animation)",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "tube-entry-animation",
+    "type": "vite",
+    "threeVersion": "0.176.0",
+    "category": "animation",
+    "description": "隧道入口动画",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "tube-travel",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "animation",
+    "description": "隧道漫游动画",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "tween-all-feature",
+    "type": "vite",
+    "threeVersion": "0.175.0",
+    "category": "animation",
+    "description": "Tween.js 全部特性演示",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "tween-animation",
+    "type": "importmap",
+    "threeVersion": "0.175.0",
+    "category": "animation",
+    "description": "Tween.js 补间动画基础",
+    "hasPublicAssets": false
+  },
+  {
+    "name": "3d-music-player",
+    "type": "vite",
+    "threeVersion": "0.184.0",
+    "category": "effect",
+    "description": "3D 音乐播放器",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "3d-pie-chart",
+    "type": "vite",
+    "threeVersion": "0.176.0",
+    "category": "effect",
+    "description": "3D 饼图",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "audio-api",
+    "type": "vite",
+    "threeVersion": "0.176.0",
+    "category": "effect",
+    "description": "Web Audio API + Three.js",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "car-config",
+    "type": "vite",
+    "threeVersion": "0.184.0",
+    "category": "effect",
+    "description": "汽车配置器",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "dancing-mirror",
+    "type": "vite",
+    "threeVersion": "0.184.0",
+    "category": "effect",
+    "description": "跳舞的镜面效果",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "gradient-color-bar-chart",
+    "type": "vite",
+    "threeVersion": "0.175.0",
+    "category": "effect",
+    "description": "渐变色柱状图",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "number-rain",
+    "type": "vite",
+    "threeVersion": "0.184.0",
+    "category": "effect",
+    "description": "数字雨（黑客帝国风格）",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "snowy-forest",
+    "type": "vite",
+    "threeVersion": "0.175.0",
+    "category": "effect",
+    "description": "雪森林场景",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "t-shirt-design",
+    "type": "vite-react",
+    "threeVersion": "0.184.0",
+    "category": "effect",
+    "description": "T 恤 3D 设计",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "two-dancer",
+    "type": "vite",
+    "threeVersion": "0.176.0",
+    "category": "effect",
+    "description": "双人舞者 3D 演示",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "vector-dot",
+    "type": "vite",
+    "threeVersion": "0.184.0",
+    "category": "effect",
+    "description": "向量点积可视化",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "vector3-test",
+    "type": "vite",
+    "threeVersion": "0.184.0",
+    "category": "effect",
+    "description": "Vector3 操作测试",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "canvas-sprite-annotation",
+    "type": "vite",
+    "threeVersion": "0.176.0",
+    "category": "interaction",
+    "description": "Canvas Sprite 标注",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "canvas-texture",
+    "type": "vite",
+    "threeVersion": "0.176.0",
+    "category": "interaction",
+    "description": "Canvas 纹理",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "css2d-annotation",
+    "type": "vite",
+    "threeVersion": "0.176.0",
+    "category": "interaction",
+    "description": "CSS2D 渲染器标注",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "css3d-annotation",
+    "type": "vite",
+    "threeVersion": "0.176.0",
+    "category": "interaction",
+    "description": "CSS3D 渲染器标注",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "css3d-computer",
+    "type": "vite-react",
+    "threeVersion": "0.184.0",
+    "category": "interaction",
+    "description": "CSS3D 计算机展示",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "sprite",
+    "type": "vite",
+    "threeVersion": "0.175.0",
+    "category": "interaction",
+    "description": "精灵 (Sprite) 使用",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "sprite-text-test",
+    "type": "vite",
+    "threeVersion": "0.184.0",
+    "category": "interaction",
+    "description": "精灵文字测试",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "react-three-app",
+    "type": "vite-react",
+    "threeVersion": "0.184.0",
+    "category": "react-integration",
+    "description": "React Three.js 集成应用",
+    "hasPublicAssets": true
+  },
+  {
+    "name": "threejs-editor",
+    "type": "vite-react",
+    "threeVersion": "0.184.0",
+    "category": "react-integration",
+    "description": "Three.js 场景编辑器（React + Zustand）",
+    "hasPublicAssets": true
+  }
+]

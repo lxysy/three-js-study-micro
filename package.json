@@ -1,0 +1,29 @@
+{
+  "name": "three-js-study-micro",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run build:deps && npm run build:registry && npm run build:demos && vite build",
+    "build:deps": "node scripts/prepare-shared-deps.js",
+    "build:registry": "node scripts/prepare-registry.js",
+    "build:demos": "node scripts/build-type-a.js && node scripts/build-type-b.js",
+    "build:type-a": "node scripts/build-type-a.js",
+    "build:type-b": "node scripts/build-type-b.js",
+    "preview": "vite preview",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "@micro-zoe/micro-app": "1.0.0-rc.31"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.2",
+    "vite": "^8.0.16",
+    "@playwright/test": "^1.52.0",
+    "simplex-noise": "^4.0.3",
+    "@tweenjs/tween.js": "^25.0.0"
+  }
+}

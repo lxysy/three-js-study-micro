@@ -1,0 +1,69 @@
+body {
+  margin: 0;
+}
+
+#desktop {
+  /* 对应局部坐标系中的x轴 */
+  /* desktop 的中心点在 (300, 550) */
+  /* css3dObj.rotateX(-Math.PI / 2) 会导致width和height交换,在旋转后就从竖图变为横图了 */
+  width: 600px;
+  height: 1100px;
+  background: pink;
+  backface-visibility: hidden;
+  position: relative;
+
+  /* CSS 元素的 width → 局部 X 方向
+     CSS 元素的 height → 局部 Y 方向
+     CSS 的 left → 局部 -X，top → 局部 -Y */
+
+  .bg {
+    position: absolute;
+    /* 已知 desktop 中心 (300, 550)，bg 尺寸 1100×600，求 left/top： */
+    /* left = desktopCenterX - bgWidth/2  = 300 - 550 = -250
+       top  = desktopCenterY - bgHeight/2 = 550 - 300 =  250 */
+    width: 1100px;
+    height: 600px;
+
+    /* 旋转会交换宽高的视觉表现 */
+    rotate: -90deg;
+
+    left: -250px;
+    top: 250px;
+  }
+}
+
+#desktop .app {
+  position: absolute;
+  left: 50px;
+  top: 900px;
+  width: 100px;
+  height: 100px;
+  rotate: -90deg;
+  /* border: 1px solid blue; */
+}
+#desktop .app:hover {
+  background: lightblue;
+}
+
+#desktop .app .logo {
+  width: 50px;
+  height: 50px;
+  background: blue;
+  translate: 50% 0;
+  background: url(./chrome.png);
+  background-size: cover;
+}
+
+#desktop .app .name {
+  font-size: 30px;
+  color: white;
+}
+
+#desktop .browser {
+  width: 900px;
+  height: 600px;
+  position: absolute;
+  left: -150px;
+  top: 250px;
+  rotate: -90deg;
+}

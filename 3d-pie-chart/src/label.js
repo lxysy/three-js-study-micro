@@ -1,0 +1,33 @@
+import * as THREE from "three";
+
+/**
+ * 这里要注意 dpr 的问题，Sprite 的高度为 50，那 canvas 的高度就是 50 * dpr，这样正好不模糊，字体大小也要乘以 2，比如 30px * 2 = 60px。
+ */
+function createCanvas(text, width) {
+  const canvas = document.createElement("canvas");
+  const dpr = window.devicePixelRatio;
+
+  const w = (canvas.width = width * dpr);
+  const h = (canvas.height = 50 * dpr);
+
+  const c = canvas.getContext("2d");
+  c.translate(w / 2, h / 2);
+  c.fillStyle = "#ffffff";
+  c.font = `normal ${30 * dpr}px 微软雅黑`;
+  c.textBaseline = "middle";
+  c.textAlign = "center";
+  c.fillText(text, 0, 0);
+  return canvas;
+}
+
+export default function createLabel(text) {
+  const texture = new THREE.CanvasTexture(createCanvas(text, text.length * 30));
+
+  const spriteMaterial = new THREE.SpriteMaterial({
+    map: texture,
+  });
+
+  const label = new THREE.Sprite(spriteMaterial);
+  label.scale.set(text.length * 30, 100);
+  return label;
+}

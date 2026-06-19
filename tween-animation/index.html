@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 为 JavaScript 的 ES 模块（import 语句）提供路径别名映射，类似于开发工具（如 Webpack/Vite）中的别名配置，但直接在浏览器中运行，无需构建工具。 -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./node_modules/three/build/three.module.js",
+        "three/addons/": "./node_modules/three/examples/jsm/",
+        "@tweenjs/tween.js": "./node_modules/@tweenjs/tween.js/dist/tween.esm.js"
+      } 
+    }
+    </script>
+  <script type="module" src="./index.js"></script>
+</body>
+
+</html>
