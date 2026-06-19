@@ -131,6 +131,20 @@ function buildViteProject(name, projectDir, isReact) {
     })
   }
 
+  // Ensure sass-embedded is available for projects using SCSS (Vite 8+)
+  const hasScss = existsSync(join(projectDir, 'src'))
+    ? execSync('find src -name "*.scss" -o -name "*.sass" 2>/dev/null | head -1', { cwd: projectDir, stdio: 'pipe' }).toString().trim()
+    : ''
+  if (hasScss && !existsSync(join(projectDir, 'node_modules', 'sass-embedded'))) {
+    try {
+      execSync('npm install sass-embedded --no-save --no-audit --no-fund --loglevel=error', {
+        cwd: projectDir,
+        stdio: 'pipe',
+        timeout: 60000,
+      })
+    } catch {}
+  }
+
   // Prepare config
   const backupPath = prepareViteConfig(projectDir, name, isReact)
 
