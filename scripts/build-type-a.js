@@ -33,7 +33,7 @@ function ensureDir(dir) {
  * to the shared deps directory and rewrites the path.
  */
 function rewriteImportmap(html, threeVersion, destDir) {
-  const sharedThreePath = `../_shared/three@${threeVersion}`
+  const sharedThreePath = `/demos/_shared/three@${threeVersion}`
 
   // Find the importmap block
   const importmapRegex = /<script\s+type="importmap">([\s\S]*?)<\/script>/i
@@ -73,7 +73,7 @@ function rewriteImportmap(html, threeVersion, destDir) {
       } catch {}
     }
 
-    return `"${key}": "../_shared/${npmPath}"`
+    return `"${key}": "/demos/_shared/${npmPath}"`
   })
 
   return html.replace(importmapRegex, `<script type="importmap">${updatedContent}</script>`)
@@ -117,8 +117,10 @@ function copyPublicAssets(srcDir, destDir) {
  * This eliminates dependency on <script type="importmap"> which
  * may not work in micro-app iframe sandboxes.
  */
-function rewriteJSImports(dir, threeVersion) {
-  const sharedThree = `../_shared/three@${threeVersion}`
+// Use root-relative path so imports resolve correctly regardless of
+// the sandbox iframe's base URL (micro-app sets it to the main page URL)
+function rewriteJSImports(dir, threeVersion, importmapEntries = {}) {
+  const sharedThree = `/demos/_shared/three@${threeVersion}`
   const entries = readdirSync(dir, { recursive: true })
   for (const entry of entries) {
     const fullPath = join(dir, entry)
@@ -156,6 +158,24 @@ function rewriteJSImports(dir, threeVersion) {
         (match, addonPath) => `import("${sharedThree}/examples/jsm/${addonPath}")`
       )
       changed = true
+    }
+
+    // Replace third-party bare imports using resolved importmap entries
+    for (const [bareSpec, resolvedPath] of Object.entries(importmapEntries)) {
+      if (bareSpec === 'three' || bareSpec === 'three/addons/') continue
+      // Escape special regex chars in the specifier
+      const escaped = bareSpec.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&')
+      const regex = new RegExp(`from\\s+["']${escaped}["']`, 'g')
+      if (regex.test(content)) {
+        content = content.replace(regex, `from "${resolvedPath}"`)
+        changed = true
+      }
+      // Also handle dynamic imports
+      const dynRegex = new RegExp(`import\\(["']${escaped}["']\\)`, 'g')
+      if (dynRegex.test(content)) {
+        content = content.replace(dynRegex, `import("${resolvedPath}")`)
+        changed = true
+      }
     }
 
     if (changed) {
@@ -217,11 +237,70 @@ function buildDemo(name, srcDir) {
   // Copy public assets
   copyPublicAssets(srcDir, destDir)
 
-  // Rewrite bare "three" imports in JS files to relative paths
+  // Extract importmap entries for JS import rewriting
+  let importmapEntries = {}
+  const htmlPath2 = join(destDir, 'index.html')
+  if (existsSync(htmlPath2)) {
+    const builtHtml = readFileSync(htmlPath2, 'utf-8')
+    const imMatch = builtHtml.match(/<script\s+type="importmap">([\s\S]*?)<\/script>/i)
+    if (imMatch) {
+      try {
+        const im = JSON.parse(imMatch[1])
+        if (im.imports) importmapEntries = im.imports
+      } catch {}
+    }
+  }
+
+  // Rewrite bare imports in JS files to actual paths
   // This avoids relying on <script type="importmap"> which micro-app may not process
-  rewriteJSImports(destDir, threeVersion)
+  rewriteJSImports(destDir, threeVersion, importmapEntries)
 
   return true
+}
+
+/**
+ * Rewrite bare 'three' imports in shared Three.js addons files.
+ * These files use import { ... } from 'three' which only works
+ * when an importmap is present. Since micro-app may not process
+ * importmaps correctly, we rewrite them to root-relative paths.
+ */
+function rewriteSharedAddonsImports() {
+  const sharedDir = join(PUBLIC_DEMOS, '_shared')
+  if (!existsSync(sharedDir)) return
+
+  // Find all three@version directories
+  const sharedEntries = readdirSync(sharedDir)
+  for (const entry of sharedEntries) {
+    const match = entry.match(/^three@(.+)$/)
+    if (!match) continue
+    const version = match[1]
+    const threeDir = join(sharedDir, entry)
+    const modulePath = `/demos/_shared/three@${version}/build/three.module.js`
+
+    // Process all JS files in this version's directory
+    const entries2 = readdirSync(threeDir, { recursive: true })
+    for (const file of entries2) {
+      if (!file.endsWith('.js') && !file.endsWith('.mjs')) continue
+      const fullPath = join(threeDir, file)
+      // Skip the main three.module.js and three.core.js (they use relative imports only)
+      if (file === 'build/three.module.js' || file === 'build/three.core.js') continue
+      let content = readFileSync(fullPath, 'utf-8')
+      let changed = false
+
+      // Replace bare 'three' import in addons files
+      if (content.includes(`from 'three'`) || content.includes(`from "three"`)) {
+        content = content.replace(
+          /from\s+['"]three['"]/g,
+          `from '${modulePath}'`
+        )
+        changed = true
+      }
+
+      if (changed) {
+        writeFileSync(fullPath, content, 'utf-8')
+      }
+    }
+  }
 }
 
 function main() {
@@ -258,6 +337,9 @@ function main() {
       failed++
     }
   }
+
+  // Rewrite bare 'three' imports in shared addons for micro-app compat
+  rewriteSharedAddonsImports()
 
   console.log()
   console.log(`Type A build complete: ${success} succeeded, ${failed} failed`)
