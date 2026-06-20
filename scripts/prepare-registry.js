@@ -23,6 +23,7 @@ const EXCLUDE_DIRS = new Set([
 // Known Vite React projects (have JSX/React dependencies)
 const VITE_REACT_PROJECTS = new Set([
   'threejs-editor', 'css3d-computer', 't-shirt-design', 'react-three-app',
+  'home-decoration-editor',
 ])
 
 function scanDirectory(dir, meta) {

@@ -368,6 +368,14 @@
     "hasPublicAssets": true
   },
   {
+    "name": "home-decoration-editor",
+    "type": "vite-react",
+    "threeVersion": "0.184.0",
+    "category": "effect",
+    "description": "3D 家居装修编辑器（React + TypeScript）",
+    "hasPublicAssets": true
+  },
+  {
     "name": "number-rain",
     "type": "vite",
     "threeVersion": "0.184.0",

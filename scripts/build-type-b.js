@@ -114,6 +114,31 @@ function restoreViteConfig(projectDir, backupPath) {
 /**
  * Build a single Vite project
  */
+/**
+ * Recursively check if a directory contains SCSS/SASS files (cross-platform)
+ */
+function hasScssFiles(dir) {
+  const srcDir = join(dir, 'src')
+  if (!existsSync(srcDir)) return false
+
+  try {
+    const stack = [srcDir]
+    while (stack.length > 0) {
+      const current = stack.pop()
+      const items = readdirSync(current)
+      for (const item of items) {
+        const fullPath = join(current, item)
+        if (statSync(fullPath).isDirectory()) {
+          if (item !== 'node_modules') stack.push(fullPath)
+        } else if (item.endsWith('.scss') || item.endsWith('.sass')) {
+          return true
+        }
+      }
+    }
+  } catch {}
+  return false
+}
+
 function buildViteProject(name, projectDir, isReact) {
   console.log(`  → ${name}${isReact ? ' (React)' : ''}`)
 
@@ -132,10 +157,7 @@ function buildViteProject(name, projectDir, isReact) {
   }
 
   // Ensure sass-embedded is available for projects using SCSS (Vite 8+)
-  const hasScss = existsSync(join(projectDir, 'src'))
-    ? execSync('find src -name "*.scss" -o -name "*.sass" 2>/dev/null | head -1', { cwd: projectDir, stdio: 'pipe' }).toString().trim()
-    : ''
-  if (hasScss && !existsSync(join(projectDir, 'node_modules', 'sass-embedded'))) {
+  if (hasScssFiles(projectDir) && !existsSync(join(projectDir, 'node_modules', 'sass-embedded'))) {
     try {
       execSync('npm install sass-embedded --no-save --no-audit --no-fund --loglevel=error', {
         cwd: projectDir,

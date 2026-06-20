@@ -70,6 +70,7 @@
     "sprite": { "category": "interaction", "description": "精灵 (Sprite) 使用" },
     "sprite-text-test": { "category": "interaction", "description": "精灵文字测试" },
     "react-three-app": { "category": "react-integration", "description": "React Three.js 集成应用" },
-    "threejs-editor": { "category": "react-integration", "description": "Three.js 场景编辑器（React + Zustand）" }
+    "threejs-editor": { "category": "react-integration", "description": "Three.js 场景编辑器（React + Zustand）" },
+    "home-decoration-editor": { "category": "effect", "description": "3D 家居装修编辑器（React + TypeScript）" }
   }
 }
