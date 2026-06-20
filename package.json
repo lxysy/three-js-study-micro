@@ -12,7 +12,8 @@
     "build:type-a": "node scripts/build-type-a.js",
     "build:type-b": "node scripts/build-type-b.js",
     "preview": "vite preview",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "deploy": "npm run build && node scripts/strip-large-files.js && wrangler pages deploy dist/ --branch=master --commit-dirty=true"
   },
   "dependencies": {
     "react": "^19.2.7",
