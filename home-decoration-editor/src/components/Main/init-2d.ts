@@ -15,8 +15,8 @@ export function init2D(dom: HTMLElement) {
   const ambientLight = new THREE.AmbientLight(0xffffff, 2);
   scene.add(ambientLight);
 
-  const width = window.innerWidth;
-  const height = window.innerHeight - 60;
+  const width = dom.clientWidth;
+  const height = dom.clientHeight;
 
   const camera = new THREE.PerspectiveCamera(60, width / height, 1, 100000);
   camera.position.set(0, 10000, 0);
@@ -27,6 +27,7 @@ export function init2D(dom: HTMLElement) {
   });
   renderer.setSize(width, height);
   renderer.setClearColor("lightblue");
+  renderer.setPixelRatio(window.devicePixelRatio);
 
   // 修改相机位置到俯视角
   // 改了 camera 的 lookAt 要同时修改 OrbitControls 的 target 才可以，不然会被重置到 0,0,0
@@ -52,15 +53,15 @@ export function init2D(dom: HTMLElement) {
 
   dom.append(renderer.domElement);
 
-  window.onresize = function () {
-    const width = window.innerWidth;
-    const height = window.innerHeight - 60;
-
-    renderer.setSize(width, height);
-
-    camera.aspect = width / height;
+  // Use ResizeObserver for accurate container resize tracking
+  const resizeObserver = new ResizeObserver(() => {
+    const w = dom.clientWidth;
+    const h = dom.clientHeight;
+    renderer.setSize(w, h);
+    camera.aspect = w / h;
     camera.updateProjectionMatrix();
-  };
+  });
+  resizeObserver.observe(dom);
 
   return {
     scene,

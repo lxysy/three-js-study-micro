@@ -21,8 +21,8 @@ export function init3D(dom: HTMLElement, wallsVisibilityCalc: () => void) {
   const ambientLight = new THREE.AmbientLight(0xffffff, 2.5);
   scene.add(ambientLight);
 
-  const width = window.innerWidth;
-  const height = window.innerHeight - 60;
+  let width = dom.clientWidth;
+  let height = dom.clientHeight;
 
   const camera = new THREE.PerspectiveCamera(60, width / height, 1, 100000);
   camera.position.set(8000, 8000, 5000);
@@ -33,6 +33,7 @@ export function init3D(dom: HTMLElement, wallsVisibilityCalc: () => void) {
   });
   renderer.setSize(width, height);
   renderer.setClearColor("lightblue");
+  renderer.setPixelRatio(window.devicePixelRatio);
 
   function render() {
     renderer.render(scene, camera);
@@ -45,15 +46,15 @@ export function init3D(dom: HTMLElement, wallsVisibilityCalc: () => void) {
 
   dom.append(renderer.domElement);
 
-  window.onresize = function () {
-    const width = window.innerWidth;
-    const height = window.innerHeight - 60;
-
+  // Use ResizeObserver for accurate container resize tracking
+  const resizeObserver = new ResizeObserver(() => {
+    width = dom.clientWidth;
+    height = dom.clientHeight;
     renderer.setSize(width, height);
-
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-  };
+  });
+  resizeObserver.observe(dom);
 
   const controls = new OrbitControls(camera, renderer.domElement);
 
