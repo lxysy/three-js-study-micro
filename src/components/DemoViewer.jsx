@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 
 function DemoViewer({ demo }) {
   const [status, setStatus] = useState('idle') // idle | loading | loaded | error
@@ -6,7 +6,48 @@ function DemoViewer({ demo }) {
   const [glContextLost, setGlContextLost] = useState(false)
   const [retryKey, setRetryKey] = useState(0)
   const timeoutRef = useRef(null)
+  const microAppRef = useRef(null)
 
+  const getDemoUrl = useCallback((demo) => {
+    return `./demos/${demo.name}/index.html`
+  }, [])
+
+  // Wire up micro-app event listeners manually (React's onMounted/onError
+  // props don't work for custom events on custom elements in all versions)
+  useEffect(() => {
+    const el = microAppRef.current
+    if (!el || !demo) return
+
+    const handleMounted = () => {
+      // Use requestAnimationFrame to ensure DOM is stable before setting loaded
+      requestAnimationFrame(() => {
+        setStatus('loaded')
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current)
+          timeoutRef.current = null
+        }
+      })
+    }
+
+    const handleError = () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+        timeoutRef.current = null
+      }
+      setStatus('error')
+      setErrorMsg('Demo 加载失败，可能是路径或资源问题')
+    }
+
+    el.addEventListener('mounted', handleMounted)
+    el.addEventListener('error', handleError)
+
+    return () => {
+      el.removeEventListener('mounted', handleMounted)
+      el.removeEventListener('error', handleError)
+    }
+  }, [demo])
+
+  // Loading timeout
   useEffect(() => {
     if (!demo) {
       setStatus('idle')
@@ -18,13 +59,11 @@ function DemoViewer({ demo }) {
     setErrorMsg('')
     setGlContextLost(false)
 
-    // Set loading timeout (30s for Three.js demos with large assets)
     timeoutRef.current = setTimeout(() => {
       setStatus('error')
       setErrorMsg('加载超时')
     }, 30000)
 
-    // Cleanup: clear timeout when demo changes or component unmounts
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
@@ -33,58 +72,34 @@ function DemoViewer({ demo }) {
     }
   }, [demo])
 
-  const getDemoUrl = (demo) => {
-    const baseUrl = import.meta.env.DEV
-      ? `./demos/${demo.name}/index.html`
-      : `./demos/${demo.name}/index.html`
+  // WebGL context lost listener
+  useEffect(() => {
+    if (status !== 'loaded' || !demo) return
 
-    if (import.meta.env.DEV) {
-      return baseUrl
-    }
-    return baseUrl
-  }
-
-  const handleMounted = () => {
-    setStatus('loaded')
-
-    // Clear the loading timeout since demo loaded successfully
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-      timeoutRef.current = null
-    }
-
-    // Attach WebGL context lost listener on the iframe's canvas
-    try {
-      const microAppEl = document.querySelector(`micro-app[name="${demo.name}"]`)
-      const iframe = microAppEl?.shadowRoot?.querySelector('iframe')
-      if (iframe?.contentDocument) {
-        const canvas = iframe.contentDocument.querySelector('canvas')
+    const timer = setTimeout(() => {
+      try {
+        const microAppEl = document.querySelector(`micro-app[name="${demo.name}"]`)
+        if (!microAppEl) return
+        // Try to find canvas in micro-app-body (inline mode) or iframe
+        const canvas = microAppEl.querySelector('canvas')
         if (canvas) {
           canvas.addEventListener('webglcontextlost', () => {
             setGlContextLost(true)
           }, { once: true })
         }
+      } catch {
+        // cross-origin or missing element — ok
       }
-    } catch {
-      // cross-origin — fallback to micro-app lifecycle cleanup
-    }
-  }
+    }, 500)
 
-  const handleError = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-      timeoutRef.current = null
-    }
-    setStatus('error')
-    setErrorMsg('Demo 加载失败，可能是路径或资源问题')
-  }
+    return () => clearTimeout(timer)
+  }, [status, demo])
 
   const handleRetry = () => {
     if (demo) {
       setStatus('loading')
       setErrorMsg('')
       setGlContextLost(false)
-      // Increment retryKey to force micro-app remount via key change
       setRetryKey(prev => prev + 1)
     }
   }
@@ -154,12 +169,11 @@ function DemoViewer({ demo }) {
 
       {/* micro-app: framework-managed iframe lifecycle */}
       <micro-app
+        ref={microAppRef}
         key={`${demo.name}-${retryKey}`}
         name={demo.name}
         url={getDemoUrl(demo)}
         iframe="true"
-        onMounted={handleMounted}
-        onError={handleError}
         style={{ width: '100%', height: '100%', border: 'none' }}
       />
     </div>
