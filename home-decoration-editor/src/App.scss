@@ -3,7 +3,7 @@ body {
 }
 
 .wrap {
-  height: 100%;
+  height: calc(100dvh - 48px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
