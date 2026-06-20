@@ -57,6 +57,22 @@ async function loadDoor() {
   }
 }
 
+// 加载地板纹理
+const textureLoader = new THREE.TextureLoader();
+const floorTexture = textureLoader.load("./floor-texture.png");
+floorTexture.colorSpace = THREE.SRGBColorSpace;
+// 设置纹理在 S（水平/U方向）和 T（垂直/V方向）上重复平铺
+// 当 UV 坐标超出 [0,1] 范围时，纹理不会拉伸而是重复拼接
+floorTexture.wrapS = THREE.RepeatWrapping;
+floorTexture.wrapT = THREE.RepeatWrapping;
+// 因为 ShapeGeometry、ExtrudeGeometry 这种画出来的几何体的 uv 值都特别大，所以要设置一个比较小的 repeat 才能正常展示出纹理。
+//     默认 repeat 为 (1, 1)，纹理采样时 UV 每增加 1 就重复一次
+// 800 的范围 → 纹理在 U 和 V 方向上各重复 800 次
+// 结果：整个地板看起来密密麻麻全是缩微的小纹理，完全看不出图案
+// repeat = 0.002 → 每 1 个单位 UV 只显示 0.002 倍的纹理
+//             → 800 个单位 UV 显示 800 × 0.002 = 1.6 遍纹理
+floorTexture.repeat.set(0.002, 0.002);
+
 function Main() {
   const scene3DRef = useRef<THREE.Scene>(null);
   const scene2DRef = useRef<THREE.Scene>(null);
@@ -209,22 +225,6 @@ function Main() {
     house.add(...walls);
 
     // 绘制地板
-    const textureLoader = new THREE.TextureLoader();
-    const floorTexture = textureLoader.load("./floor-texture.png");
-    floorTexture.colorSpace = THREE.SRGBColorSpace;
-    // 设置纹理在 S（水平/U方向）和 T（垂直/V方向）上重复平铺
-    // 当 UV 坐标超出 [0,1] 范围时，纹理不会拉伸而是重复拼接
-    floorTexture.wrapS = THREE.RepeatWrapping;
-    floorTexture.wrapT = THREE.RepeatWrapping;
-    // 因为 ShapeGeometry、ExtrudeGeometry 这种画出来的几何体的 uv 值都特别大，所以要设置一个比较小的 repeat 才能正常展示出纹理。
-    //     默认 repeat 为 (1, 1)，纹理采样时 UV 每增加 1 就重复一次
-    // 800 的范围 → 纹理在 U 和 V 方向上各重复 800 次
-    // 结果：整个地板看起来密密麻麻全是缩微的小纹理，完全看不出图案
-    // repeat = 0.002 → 每 1 个单位 UV 只显示 0.002 倍的纹理
-    //             → 800 个单位 UV 显示 800 × 0.002 = 1.6 遍纹理
-    floorTexture.repeat.set(0.002, 0.002);
-
-    // 绘制地板
     const floors = data.floors.map((item) => {
       const shape = new THREE.Shape();
       shape.moveTo(item.points[0].x, item.points[0].z);
@@ -245,10 +245,12 @@ function Main() {
       const material = new THREE.MeshPhongMaterial({
         // color: "orange",
         map: texture,
-        side: THREE.BackSide,
+        side: THREE.DoubleSide,
       });
       console.log("geometry", geometry);
       const floor = new THREE.Mesh(geometry, material);
+      floor.position.y = 0;
+      floor.position.z = 200;
       floor.rotateX(Math.PI / 2);
 
       return floor;
@@ -287,26 +289,88 @@ function Main() {
   }, [data]);
 
   // 根据仓库中的数据绘制2D场景
-  // useEffect(() => {
-  //   const scene = scene2DRef.current!;
-  //   const walls = data.walls.map((item) => {
-  //     const shape = new THREE.Shape();
-  //     shape.moveTo(item.p1.x, item.p1.z);
-  //     shape.lineTo(item.p2.x, item.p2.z);
-  //     shape.lineTo(item.p3.x, item.p3.z);
-  //     shape.lineTo(item.p4.x, item.p4.z);
-  //     shape.lineTo(item.p1.x, item.p1.z);
-  //     const geometry = new THREE.ShapeGeometry(shape);
-  //     const material = new THREE.MeshPhongMaterial({
-  //       color: "white",
-  //     });
-  //     const wall = new THREE.Mesh(geometry, material);
-  //     wall.rotateX(-Math.PI / 2);
-  //     return wall;
-  //   });
+  useEffect(() => {
+    const scene = scene2DRef.current!;
+    const house = new THREE.Group();
+    // 绘制墙
+    const walls = data.walls.map((item, index) => {
+      const shape = new THREE.Shape();
+      shape.moveTo(0, 0);
+      shape.lineTo(0, item.depth);
+      shape.lineTo(item.width, item.depth);
+      shape.lineTo(item.width, 0);
+      shape.lineTo(0, 0);
 
-  //   scene.add(...walls);
-  // }, [data]);
+      const geometry = new THREE.ShapeGeometry(shape);
+      const material = new THREE.MeshPhongMaterial({
+        color: "white",
+        side: THREE.DoubleSide,
+      });
+      const wall = new THREE.Mesh(geometry, material);
+      // 根据shape的起点位置设置，也就是（0,0,0）
+      // matrix = 位移 × 旋转 × 缩放
+      // wall.position.set(item.position.x, item.position.y, item.position.z);
+      wall.position.set(-item.position.x, -item.position.y, -item.position.z);
+
+      if (item.rotationY) {
+        wall.rotation.y = item.rotationY;
+      }
+      wall.name = "wall" + index;
+      // 四元数后乘 再顶点变换顺序来说 这里rotateX要先于上面的rotateY
+      // v' = (Qy × Qx) × v = Qy × (Qx × v)
+      // 旋转变换顺序为 rotateY(Math.PI) -> rotateX(-Math.PI / 2) -> rotation.y
+      // 且都是绕自身坐标系旋转，shape默认在xy平面上,然后根据wall.position就可以确认自身原点坐标系
+      wall.rotateX(-Math.PI / 2);
+      wall.rotateY(Math.PI);
+
+      return wall;
+    });
+
+    // 绘制地板
+    const floors = data.floors.map((item) => {
+      const shape = new THREE.Shape();
+      shape.moveTo(item.points[0].x, item.points[0].z);
+      for (let i = 1; i < item.points.length; i++) {
+        shape.lineTo(item.points[i].x, item.points[i].z);
+      }
+
+      let texture = floorTexture;
+      if (item.textureUrl) {
+        texture = textureLoader.load(item.textureUrl);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(0.002, 0.002);
+      }
+
+      const geometry = new THREE.ShapeGeometry(shape);
+      const material = new THREE.MeshPhongMaterial({
+        map: texture,
+        side: THREE.DoubleSide,
+      });
+      const floor = new THREE.Mesh(geometry, material);
+
+      floor.position.z = -200;
+
+      floor.rotateX(Math.PI / 2);
+      floor.rotateZ(Math.PI);
+      return floor;
+    });
+
+    house.add(...floors);
+    house.add(...walls);
+    scene.add(house);
+
+    // const rad = THREE.MathUtils.degToRad(26);
+    house.rotateY(Math.PI / 2);
+
+    // 计算包围盒 包围盒中心居中 坐标轴原点
+    const box3 = new THREE.Box3();
+    box3.expandByObject(house);
+
+    const center = box3.getCenter(new THREE.Vector3());
+    house.position.set(-center.x, 0, -center.z);
+  }, [data]);
 
   // 切换按钮
   const [curMode, setCurMode] = useState("2d");

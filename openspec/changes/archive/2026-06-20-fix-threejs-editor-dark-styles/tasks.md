@@ -15,6 +15,6 @@
 
 ## 4. Build and verify
 
-- [ ] 4.1 重新构建 threejs-editor（`npm run build:type-b`）
-- [ ] 4.2 运行 e2e 测试确认无回归
-- [ ] 4.3 部署到 Cloudflare Pages 并手动验证 Properties 面板文字可见
+- [x] 4.1 重新构建 threejs-editor（`npm run build:type-b`）
+- [x] 4.2 运行 e2e 测试确认无回归
+- [x] 4.3 部署到 Cloudflare Pages 并手动验证 Properties 面板文字可见

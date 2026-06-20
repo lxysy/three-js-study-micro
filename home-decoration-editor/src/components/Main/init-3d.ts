@@ -38,7 +38,7 @@ export function init3D(dom: HTMLElement, wallsVisibilityCalc: () => void) {
     renderer.render(scene, camera);
     requestAnimationFrame(render);
 
-    wallsVisibilityCalc();
+    // wallsVisibilityCalc();
   }
 
   render();

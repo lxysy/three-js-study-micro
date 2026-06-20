@@ -1,5 +1,7 @@
-import { create } from "zustand";
+import { create, type StateCreator } from "zustand";
 import data from "./house2";
+import type { Vector3 } from "three";
+import { persist } from "zustand/middleware";
 
 interface Wall {
   position: { x: number; y: number; z: number };
@@ -32,6 +34,8 @@ interface Floor {
     z: number;
   }>;
   textureUrl?: string;
+  name?: string;
+  size?: number;
 }
 
 interface Ceiling {
@@ -42,103 +46,81 @@ interface Ceiling {
   height: number;
 }
 
+interface Furniture {
+  id: string;
+  modelUrl: string;
+  position: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  rotation: {
+    x: number;
+    y: number;
+    z: number;
+  };
+}
+
 export interface State {
   data: {
     walls: Array<Wall>;
     floors: Array<Floor>;
     ceilings: Array<Ceiling>;
+    furnitures: Array<Furniture>;
   };
 }
 
-const useHouseStore = create<State>((set, get) => {
+export interface Action {
+  setData(data: State["data"]): void;
+  updateFurniture(
+    id: string,
+    type: "position" | "rotation",
+    info: Vector3
+  ): void;
+}
+
+const stateCreator: StateCreator<State & Action> = (set, get) => {
   return {
-    // data: {
-    //   walls: [
-    //     {
-    //       position: { x: 0, y: 0, z: 0 },
-    //       width: 800,
-    //       height: 500,
-    //       depth: 30,
-    //       windows: [
-    //         {
-    //           leftBottomPosition: {
-    //             left: 100,
-    //             bottom: 50,
-    //           },
-    //           width: 300,
-    //           height: 300,
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       position: { x: 0, y: 0, z: 770 },
-    //       width: 800,
-    //       height: 500,
-    //       depth: 30,
-    //       windows: [
-    //         {
-    //           leftBottomPosition: {
-    //             left: 100,
-    //             bottom: 100,
-    //           },
-    //           width: 600,
-    //           height: 300,
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       position: { x: 0, y: 0, z: 0 },
-    //       width: 800,
-    //       height: 500,
-    //       depth: 30,
-    //       rotationY: -Math.PI / 2,
-    //       windows: [],
-    //     },
-    //     {
-    //       position: { x: 800, y: 0, z: 0 },
-    //       width: 800,
-    //       height: 500,
-    //       depth: 30,
-    //       rotationY: -Math.PI / 2,
-    //       windows: [],
-    //       doors: [
-    //         {
-    //           leftBottomPosition: {
-    //             left: 200,
-    //             bottom: 20,
-    //           },
-    //           width: 300,
-    //           height: 400,
-    //         },
-    //       ],
-    //     },
-    //   ],
-    //   floors: [
-    //     {
-    //       points: [
-    //         { x: 0, z: 0 },
-    //         { x: 0, z: 800 },
-    //         { x: 800, z: 800 },
-    //         { x: 800, z: 0 },
-    //         { x: 0, z: 0 },
-    //       ],
-    //     },
-    //   ],
-    //   ceilings: [
-    //     {
-    //       points: [
-    //         { x: 0, z: 0 },
-    //         { x: 0, z: 800 },
-    //         { x: 800, z: 800 },
-    //         { x: 800, z: 0 },
-    //         { x: 0, z: 0 },
-    //       ],
-    //       height: 500,
-    //     },
-    //   ],
-    // },
     data: data,
+    setData(data) {
+      set((state) => {
+        return {
+          ...state,
+          data: data,
+        };
+      });
+    },
+    updateFurniture(id, type, info) {
+      set((state) => {
+        return {
+          ...state,
+          data: {
+            ...state.data,
+            furnitures: state.data.furnitures.map((item) => {
+              if (item.id === id) {
+                if (type === "position") {
+                  item.position.x = info.x;
+                  item.position.y = info.y;
+                  item.position.z = info.z;
+                } else {
+                  item.rotation.x = info.x;
+                  item.rotation.y = info.y;
+                  item.rotation.z = info.z;
+                }
+              }
+              return item;
+            }),
+          },
+        };
+      });
+    },
   };
-});
+};
+
+const useHouseStore = create<State & Action>()(
+  persist(stateCreator, {
+    name: "house",
+  })
+);
 
 export { useHouseStore };

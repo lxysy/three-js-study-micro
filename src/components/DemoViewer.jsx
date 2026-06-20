@@ -3,29 +3,33 @@ import React, { useState, useEffect, useRef } from 'react'
 function DemoViewer({ demo }) {
   const [status, setStatus] = useState('idle') // idle | loading | loaded | error
   const [errorMsg, setErrorMsg] = useState('')
-  const iframeRef = useRef(null)
-  const microAppRef = useRef(null)
+  const [glContextLost, setGlContextLost] = useState(false)
+  const [retryKey, setRetryKey] = useState(0)
+  const timeoutRef = useRef(null)
 
   useEffect(() => {
     if (!demo) {
       setStatus('idle')
+      setGlContextLost(false)
       return
     }
 
     setStatus('loading')
     setErrorMsg('')
+    setGlContextLost(false)
 
-    // Build the demo URL based on type
-    const demoUrl = getDemoUrl(demo)
+    // Set loading timeout (30s for Three.js demos with large assets)
+    timeoutRef.current = setTimeout(() => {
+      setStatus('error')
+      setErrorMsg('加载超时')
+    }, 30000)
 
-    // Load demo via micro-app or iframe
-    // For micro-app approach, we'd use <micro-app> tag
-    // For direct iframe approach (simpler, more reliable for WebGL):
-    loadInIframe(demoUrl)
-
-    // Cleanup on unmount or demo change
+    // Cleanup: clear timeout when demo changes or component unmounts
     return () => {
-      setStatus('idle')
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+        timeoutRef.current = null
+      }
     }
   }, [demo])
 
@@ -34,32 +38,43 @@ function DemoViewer({ demo }) {
       ? `./demos/${demo.name}/index.html`
       : `./demos/${demo.name}/index.html`
 
-    // Dev mode: use dev server
     if (import.meta.env.DEV) {
       return baseUrl
     }
     return baseUrl
   }
 
-  const loadInIframe = (url) => {
-    // Set a timeout for loading
-    const timeout = setTimeout(() => {
-      if (status === 'loading') {
-        setStatus('error')
-        setErrorMsg('加载超时')
-      }
-    }, 30000) // 30s timeout for Three.js demos with large assets
-
-    // The iframe's onLoad handles the success case
-    // We'll track the timeout reference
-    return timeout
-  }
-
-  const handleIframeLoad = () => {
+  const handleMounted = () => {
     setStatus('loaded')
+
+    // Clear the loading timeout since demo loaded successfully
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+
+    // Attach WebGL context lost listener on the iframe's canvas
+    try {
+      const microAppEl = document.querySelector(`micro-app[name="${demo.name}"]`)
+      const iframe = microAppEl?.shadowRoot?.querySelector('iframe')
+      if (iframe?.contentDocument) {
+        const canvas = iframe.contentDocument.querySelector('canvas')
+        if (canvas) {
+          canvas.addEventListener('webglcontextlost', () => {
+            setGlContextLost(true)
+          }, { once: true })
+        }
+      }
+    } catch {
+      // cross-origin — fallback to micro-app lifecycle cleanup
+    }
   }
 
-  const handleIframeError = () => {
+  const handleError = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
     setStatus('error')
     setErrorMsg('Demo 加载失败，可能是路径或资源问题')
   }
@@ -68,11 +83,9 @@ function DemoViewer({ demo }) {
     if (demo) {
       setStatus('loading')
       setErrorMsg('')
-      // Force re-render the iframe by changing key
-      const demoUrl = getDemoUrl(demo)
-      if (iframeRef.current) {
-        iframeRef.current.src = demoUrl
-      }
+      setGlContextLost(false)
+      // Increment retryKey to force micro-app remount via key change
+      setRetryKey(prev => prev + 1)
     }
   }
 
@@ -128,15 +141,26 @@ function DemoViewer({ demo }) {
         </div>
       )}
 
-      {/* Demo iframe */}
-      <iframe
-        ref={iframeRef}
-        src={demo ? getDemoUrl(demo) : ''}
-        onLoad={handleIframeLoad}
-        onError={handleIframeError}
-        title={demo?.name || 'demo'}
-        allow="webgl"
-        sandbox="allow-scripts allow-same-origin allow-popups"
+      {/* WebGL context lost recovery */}
+      {glContextLost && (
+        <div className="error-overlay">
+          <div className="error-icon">🎮</div>
+          <div className="error-text">WebGL 上下文丢失，请重新加载</div>
+          <button className="retry-btn" onClick={handleRetry}>
+            重新加载
+          </button>
+        </div>
+      )}
+
+      {/* micro-app: framework-managed iframe lifecycle */}
+      <micro-app
+        key={`${demo.name}-${retryKey}`}
+        name={demo.name}
+        url={getDemoUrl(demo)}
+        iframe
+        onMounted={handleMounted}
+        onError={handleError}
+        style={{ width: '100%', height: '100%', border: 'none' }}
       />
     </div>
   )
