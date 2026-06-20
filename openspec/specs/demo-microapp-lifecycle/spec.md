@@ -1,5 +1,8 @@
-## ADDED Requirements
+# demo-microapp-lifecycle Specification
 
+## Purpose
+TBD - created by archiving change fix-menu-switch-crash. Update Purpose after archive.
+## Requirements
 ### Requirement: Demos are loaded via micro-app component
 
 The DemoViewer SHALL use the `<micro-app>` custom element (provided by `@micro-zoe/micro-app`)
@@ -19,9 +22,9 @@ for resource cleanup.
 
 ### Requirement: WebGL cleanup on unmount
 
-When micro-app unmounts a demo (user switches away), the old demo's iframe document
-SHALL be fully destroyed — including its WebGL context, requestAnimationFrame loops,
-and DOM event listeners — preventing GPU resource accumulation.
+The system SHALL fully destroy the old demo's iframe document when micro-app
+unmounts it (user switches away) — including its WebGL context, requestAnimationFrame
+loops, and DOM event listeners — preventing GPU resource accumulation.
 
 #### Scenario: Switch from demo A to demo B
 
@@ -48,8 +51,8 @@ unmounts, preventing stale timeout callbacks from accumulating.
 
 ### Requirement: WebGL context loss recovery
 
-When the browser loses the WebGL rendering context (CONTEXT_LOST_WEBGL event),
-the system SHALL display a recovery UI allowing the user to reload the demo.
+The system SHALL display a recovery UI allowing the user to reload the demo when
+the browser loses the WebGL rendering context (CONTEXT_LOST_WEBGL event).
 
 #### Scenario: WebGL context lost detected
 
@@ -62,3 +65,4 @@ the system SHALL display a recovery UI allowing the user to reload the demo.
 - **WHEN** user clicks "重新加载" on the WebGL context loss overlay
 - **THEN** the micro-app element is remounted with a fresh URL (same demo)
 - **AND** a new WebGL context is initialized
+
