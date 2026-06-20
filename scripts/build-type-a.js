@@ -112,6 +112,58 @@ function copyPublicAssets(srcDir, destDir) {
   }
 }
 
+/**
+ * Rewrite bare "three" imports in JS files to relative paths.
+ * This eliminates dependency on <script type="importmap"> which
+ * may not work in micro-app iframe sandboxes.
+ */
+function rewriteJSImports(dir, threeVersion) {
+  const sharedThree = `../_shared/three@${threeVersion}`
+  const entries = readdirSync(dir, { recursive: true })
+  for (const entry of entries) {
+    const fullPath = join(dir, entry)
+    if (!statSync(fullPath).isFile()) continue
+    if (!entry.endsWith('.js') && !entry.endsWith('.mjs')) continue
+    let content = readFileSync(fullPath, 'utf-8')
+    let changed = false
+
+    // Replace bare "three" import
+    if (content.includes(`from "three"`) || content.includes(`from 'three'`)) {
+      content = content.replace(
+        /from\s+["']three["']/g,
+        `from "${sharedThree}/build/three.module.js"`
+      )
+      changed = true
+    }
+
+    // Replace bare "three/addons/..." imports
+    if (content.includes(`"three/addons/`) || content.includes(`'three/addons/`)) {
+      content = content.replace(
+        /from\s+["']three\/addons\/([^"']+)["']/g,
+        (match, addonPath) => `from "${sharedThree}/examples/jsm/${addonPath}"`
+      )
+      changed = true
+    }
+
+    // Replace dynamic import() with bare specifiers
+    if (content.includes(`import("three`)) {
+      content = content.replace(
+        /import\(["']three["']\)/g,
+        `import("${sharedThree}/build/three.module.js")`
+      )
+      content = content.replace(
+        /import\(["']three\/addons\/([^"']+)["']\)/g,
+        (match, addonPath) => `import("${sharedThree}/examples/jsm/${addonPath}")`
+      )
+      changed = true
+    }
+
+    if (changed) {
+      writeFileSync(fullPath, content, 'utf-8')
+    }
+  }
+}
+
 function buildDemo(name, srcDir) {
   const destDir = join(PUBLIC_DEMOS, name)
   ensureDir(destDir)
@@ -164,6 +216,10 @@ function buildDemo(name, srcDir) {
 
   // Copy public assets
   copyPublicAssets(srcDir, destDir)
+
+  // Rewrite bare "three" imports in JS files to relative paths
+  // This avoids relying on <script type="importmap"> which micro-app may not process
+  rewriteJSImports(destDir, threeVersion)
 
   return true
 }
