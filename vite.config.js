@@ -12,6 +12,8 @@ export default defineConfig({
     port: 5173,
   },
   optimizeDeps: {
-    exclude: ['demos/**'],
+    // Only scan main app entry points — don't scan demo source directories
+    // which contain importmap-based bare specifiers Vite can't resolve
+    entries: ['index.html', 'src/main.jsx'],
   },
 })
