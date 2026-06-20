@@ -21,5 +21,5 @@
 
 - [x] 4.1 Build: `npm run build`
 - [x] 4.2 Verify dist/ output has correct import paths (0 bare "three" imports)
-- [ ] 4.3 Commit and push to trigger Cloudflare Pages deploy
-- [ ] 4.4 Verify production site: no console errors on demo switch
+- [x] 4.3 Commit and push to trigger Cloudflare Pages deploy
+- [x] 4.4 Verify production site: no console errors on demo switch (0 module errors, 0 critical errors)
