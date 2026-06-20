@@ -90,6 +90,7 @@ function Properties() {
           height={"90%"}
           path="code.json"
           language="json"
+          theme="vs-dark"
           value={JSON.stringify(data, null, 2)}
         />
       ) : null}
