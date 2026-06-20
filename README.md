@@ -1,6 +1,6 @@
 # Three.js 学习展示站
 
-基于**微前端架构**的 Three.js 作品集展示站点——61 个独立 demo 在统一界面中浏览，支持分类导航、搜索过滤，一键部署到 GitHub Pages。
+基于**微前端架构**的 Three.js 作品集展示站点——62 个独立 demo 在统一界面中浏览，支持分类导航、搜索过滤，一键部署到 GitHub Pages。
 
 ---
 
@@ -37,10 +37,10 @@
 ### 子应用分类
 
 ```
-61 个 Demo
+62 个 Demo
 ├── 18 个 Type A（纯 HTML + importmap）→ 无需构建，路径重写后直出
 ├── 39 个 Type B（Vite 无框架）       → 逐个 vite build
-└──  4 个 Type B（Vite + React）      → vite build + JSX/HMR
+└──  5 个 Type B（Vite + React）      → vite build + JSX/HMR
 ```
 
 Three.js 版本分布：`^0.175.0`(27个) / `^0.176.0`(9个) / `^0.184.0`(22个)，共享目录按版本去重存储。
