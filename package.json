@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run build:deps && npm run build:registry && npm run build:demos && vite build",
+    "postbuild": "node scripts/strip-large-files.js",
     "build:deps": "node scripts/prepare-shared-deps.js",
     "build:registry": "node scripts/prepare-registry.js",
     "build:demos": "node scripts/build-type-a.js && node scripts/build-type-b.js",
