@@ -3,11 +3,14 @@ schema: spec-driven
 # Project context (optional)
 # This is shown to AI when creating artifacts.
 # Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Tech stack: React 19, Vite 8, Three.js, micro-app (@micro-zoe/micro-app)
+  Deployment: Cloudflare Pages (file limit 25MB)
+  62 Three.js demo 展示站，微前端架构
+  Demo 类型: importmap (18) + Vite (39) + Vite React (5)
+  Shell 用 hash 路由 (#/demo-name)，DemoViewer 用 micro-app 标签加载子应用
+  构建: npm run build -> deps -> registry -> demos -> shell
+  CLI: openspec 管理变更，/opsx:propose 创建新变更
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.

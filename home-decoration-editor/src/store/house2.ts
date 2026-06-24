@@ -4,13 +4,20 @@ const data: State["data"] = {
   walls: [
     {
       position: { x: 0, y: 0, z: 0 },
-      width: 2800,
+      width: 2880,
       height: 3000,
       depth: 200,
       windows: [],
       normal: { x: 0, y: 0, z: 1 },
+      text: {
+        position: { y: -300 },
+      },
       doors: [
         {
+          position: { y: 0 },
+          rotation: {
+            rotateZ: Math.PI / 2,
+          },
           leftBottomPosition: {
             left: 1680,
             bottom: 0,
@@ -35,6 +42,9 @@ const data: State["data"] = {
       height: 3000,
       depth: 200,
       windows: [],
+      text: {
+        position: { y: -300 },
+      },
       normal: { x: 0, y: 0, z: 1 },
     },
     {
@@ -65,7 +75,7 @@ const data: State["data"] = {
     },
     {
       position: { x: -2000, y: 0, z: 6880 },
-      width: 1580,
+      width: 1380,
       height: 3000,
       depth: 200,
       rotationY: -Math.PI / 2,
@@ -107,12 +117,15 @@ const data: State["data"] = {
       windows: [],
     },
     {
-      position: { x: 2880, y: 0, z: 0 },
-      width: 7180,
+      position: { x: 2880, y: 0, z: 200 },
+      width: 6880,
       height: 3000,
       depth: 200,
       rotationY: -Math.PI / 2,
       normal: { x: -1, y: 0, z: 0 },
+      text: {
+        position: { y: -300 },
+      },
       windows: [
         {
           leftBottomPosition: {
@@ -142,6 +155,8 @@ const data: State["data"] = {
         { x: -2000, z: 6680 },
         { x: -2000, z: 5000 },
       ],
+      name: "书房",
+      size: 5.64,
     },
     {
       points: [
@@ -158,6 +173,8 @@ const data: State["data"] = {
         { x: 0, z: 0 },
       ],
       textureUrl: "./floor-texture2.png",
+      name: "客餐厅",
+      size: 28.89,
     },
   ],
   ceilings: [
@@ -186,6 +203,46 @@ const data: State["data"] = {
         { x: 0, z: 0 },
       ],
       height: 3000,
+    },
+  ],
+  furnitures: [
+    {
+      id: "1",
+      modelUrl: "./dining-table.glb",
+      position: {
+        x: 1500,
+        y: 0,
+        z: 3000,
+      },
+      rotation: {
+        x: 0,
+        y: Math.PI / 2,
+        z: 0,
+      },
+      scale: {
+        x: 1000,
+        y: 1000,
+        z: 1000,
+      },
+    },
+    {
+      id: "furniture222",
+      modelUrl: "./bed2.glb",
+      scale: {
+        x: 20,
+        y: 20,
+        z: 20,
+      },
+      position: {
+        x: -647.4215938726065,
+        y: 0,
+        z: 7164.314346338078,
+      },
+      rotation: {
+        x: 0,
+        y: 1.5,
+        z: 0,
+      },
     },
   ],
 };

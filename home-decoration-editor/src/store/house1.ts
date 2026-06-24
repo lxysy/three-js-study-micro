@@ -39,7 +39,7 @@ const data: State["data"] = {
     },
     {
       position: { x: 4800, y: 0, z: 7000 },
-      width: 7000,
+      width: 6800,
       height: 3000,
       depth: 200,
       rotationY: Math.PI / 2,
@@ -48,7 +48,7 @@ const data: State["data"] = {
       doors: [
         {
           leftBottomPosition: {
-            left: 6084,
+            left: 5935,
             bottom: 0,
           },
           width: 856,
@@ -84,7 +84,7 @@ const data: State["data"] = {
   ],
   furnitures: [
     {
-      id: "111",
+      id: "dining-table",
       modelUrl: "./dining-table.glb",
       position: {
         x: 1500,
@@ -95,6 +95,11 @@ const data: State["data"] = {
         x: 0,
         y: Math.PI / 2,
         z: 0,
+      },
+      scale: {
+        x: 1000,
+        y: 1000,
+        z: 1000,
       },
     },
   ],

@@ -12,21 +12,35 @@ body {
     height: 60px;
     border-bottom: 1px solid #000;
     flex-shrink: 0;
+    .logo {
+      line-height: 60px;
+      margin: 0;
+      margin-left: 20px;
+      font-size: 36px;
+      color: #999;
+      font-weight: normal;
+      text-shadow: 2px 2px 4px lightblue;
+    }
   }
 
   .editor {
     flex: 1;
     min-height: 0;
+
     position: relative;
 
     .Main {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      #threejs-3d-container,
+      position: relative;
+      height: calc(100dvh - 48px - 60px);
+      #threejs-3d-container {
+        position: absolute;
+        z-index: 2;
+        right: 0;
+      }
       #threejs-2d-container {
         position: absolute;
-        inset: 0;
+        z-index: 1;
+        right: 0;
       }
       .mode-change-btns {
         position: absolute;
@@ -58,18 +72,32 @@ body {
       position: absolute;
       top: 0;
       width: 300px;
-      height: 100%;
-      background: pink;
-      transition: left 0.5s ease-in-out, right 0.5s ease-in-out;
+      height: calc(100dvh - 48px - 60px);
+      background: white;
+      transition:
+        left 0.5s ease-in-out,
+        right 0.5s ease-in-out;
     }
     .Menu {
       left: 0;
       border-right: 1px solid #000;
     }
     .Properties {
-      right: 0;
-      background: orange;
-      border-left: 1px solid #000;
+      height: calc(100dvh - 48px - 60px - 200px);
+      top: auto;
+      width: 240px;
+      bottom: 0;
+      pre {
+        color: #000;
+      }
     }
   }
+}
+
+#loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100dvh;
 }
